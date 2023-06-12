@@ -88,7 +88,6 @@ defmodule ExSummoners do
             x["summonerName"]
           end)
 
-        IO.inspect(participant_names)
         response["metadata"]["participants"]
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         IO.puts("Not found")
