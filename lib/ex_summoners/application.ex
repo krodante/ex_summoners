@@ -8,7 +8,7 @@ defmodule ExSummoners.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      ExSummoners.Supervisor
+      {ExSummoners.MonitorSupervisor, []}
     ]
 
     opts = [strategy: :one_for_one, name: ExSummoners.Supervisor]
