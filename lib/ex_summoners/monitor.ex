@@ -4,7 +4,6 @@ defmodule ExSummoners.Monitor do
   @interval 60000
 
   def start_link(args, opts \\ []) do
-    IO.inspect("Monitor start link")
     GenServer.start_link(__MODULE__, args, opts)
   end
 
@@ -13,7 +12,6 @@ defmodule ExSummoners.Monitor do
   end
 
   def init({summoner_puuid, summoner_name, region, most_recent_match_id}) do
-    IO.inspect("Monitor init")
     status = %{
       summoner_puuid: summoner_puuid,
       summoner_name: summoner_name,

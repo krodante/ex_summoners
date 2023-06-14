@@ -8,7 +8,6 @@ defmodule ExSummoners.MonitorSupervisor do
 
   @impl true
   def init(summoner_puuids) do
-    IO.inspect("MonitorSummoner init")
     children = 
       for summoner_puuid <- summoner_puuids do
         Supervisor.child_spec({ExSummoners.Monitor, summoner_puuid}, id: summoner_puuid)

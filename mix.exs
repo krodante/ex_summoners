@@ -23,7 +23,8 @@ defmodule ExSummoners.MixProject do
   defp deps do
     [
       {:jason, "~> 1.2"},
-      {:httpoison, "~> 2.0"}
+      {:httpoison, "~> 2.0"},
+      {:bypass, "~> 2.1", only: :test}
     ]
   end
 end
