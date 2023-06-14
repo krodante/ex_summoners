@@ -72,6 +72,7 @@ defmodule ExSummoners do
               summoner_puuid: summoner["puuid"]
             }
           end)
+        IO.inspect(Enum.map(summoner_data, fn summoner -> summoner[:summoner_name] end))
         {:ok, summoner_data}
       {:error, reason} -> {:error, reason}
     end
@@ -90,6 +91,18 @@ defmodule ExSummoners do
       else
         {:error, reason} -> {:error, reason}
       end
+    end
+  end
+
+  def update_most_recent_match(summoner_data) do
+    with {:ok, [match_id]} <- ExSummoners.get_matches(summoner_data.summoner_puuid, summoner_data.region, 1) do
+      if match_id == summoner_data.most_recent_match_id do
+        {:not_new_match, summoner_data}
+      else
+        {:new_match, %{summoner_data | most_recent_match_id: match_id}}
+      end
+    else
+      {:error, reason} -> {:error, reason}
     end
   end
 
@@ -119,3 +132,4 @@ defmodule ExSummoners do
   end
   defp response({:error, %{reason: reason}}), do: {:error, reason}
 end
+ 

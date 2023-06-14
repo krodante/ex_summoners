@@ -1,7 +1,7 @@
 defmodule ExSummoners.Monitor do
   use GenServer
 
-  @interval 1000
+  @interval :timer.seconds(10) # 1 minute
 
   def start_link(args, opts \\ []) do
     GenServer.start_link(__MODULE__, args, opts)
@@ -12,7 +12,7 @@ defmodule ExSummoners.Monitor do
   end
 
   def init({summoner_puuid, summoner_name, region, most_recent_match_id}) do
-    status = %{
+    state = %{
       summoner_puuid: summoner_puuid,
       summoner_name: summoner_name,
       region: region,
@@ -20,26 +20,23 @@ defmodule ExSummoners.Monitor do
       timer: :erlang.start_timer(@interval, self(), :tick)
     }
 
-    {:ok, status}
+    {:ok, state, :timer.hours(1)}
   end
 
-  def handle_call(:get, _from, status) do
-    IO.inspect("Monitor handle_call")
-    {:reply, status.current, status}
+  def handle_call(:get, _from, state) do
+    {:reply, state, state}
   end
 
-  def handle_info({:timeout, _timer_ref, :tick}, status) do
-    IO.inspect("Monitor handle tick for #{status.summoner_puuid}")
+  def handle_info({:timeout, _, :tick}, state) do
     new_timer = :erlang.start_timer(@interval, self(), :tick)
-    :erlang.cancel_timer(status.timer)
+    :erlang.cancel_timer(state.timer)
 
-    match_id = ExSummoners.get_matches(status.summoner_puuid, status.region, 1) |> List.first()
-
-    if match_id == status.most_recent_match_id do
-      {:noreply, %{status | timer: new_timer}}
-    else
-      IO.inspect("Summoner #{status.summoner_name} has completed match #{status.most_recent_match_id}")
-      {:noreply, %{status | most_recent_match_id: match_id, timer: new_timer}}
+    case ExSummoners.update_most_recent_match(%{state | timer: new_timer}) do
+      {:new_match, new_state} -> 
+        IO.inspect("Summoner #{new_state.summoner_name} has completed match #{state.most_recent_match_id}")
+        {:noreply, new_state, @interval}
+      {:not_new_match, state} -> {:noreply, state, @interval}
+      {:error, reason} -> {:error, reason}
     end
   end
 end

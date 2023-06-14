@@ -62,9 +62,50 @@ defmodule ExSummonersTest do
 
       assert Supervisor.which_children(ExSummoners.MonitorSupervisor) |> Enum.count() == 10
     end
+  end
 
-    test "handles api errors gracefully" do
-      
+  describe "update_most_recent_match/1" do
+    test "returns :new_match when the summoner match list has a new match", %{bypass: bypass} do
+      Bypass.expect(bypass, "GET", "/lol/match/v5/matches/by-puuid/fake_puuid1/ids", fn conn ->
+        assert "1" == conn.params["count"]
+        Plug.Conn.send_resp(conn, 200, Jason.encode!(["newest_match"]))
+      end)
+
+      summoner_data = %{
+        summoner_puuid: "fake_puuid1",
+        summoner_name: "fake_name",
+        region: "region",
+        most_recent_match_id: "match_id"
+      }
+
+      new_summoner_data = %{
+        summoner_puuid: "fake_puuid1",
+        summoner_name: "fake_name",
+        region: "region",
+        most_recent_match_id: "newest_match"
+      }
+
+      response = ExSummoners.update_most_recent_match(summoner_data)
+
+      assert response == {:new_match, new_summoner_data}
+    end
+
+    test "returns :not_new_match when the summoner match list does not have a new match", %{bypass: bypass} do
+      Bypass.expect(bypass, "GET", "/lol/match/v5/matches/by-puuid/fake_puuid2/ids", fn conn ->
+        assert "1" == conn.params["count"]
+        Plug.Conn.send_resp(conn, 200, Jason.encode!(["match_id"]))
+      end)
+
+      summoner_data = %{
+        summoner_puuid: "fake_puuid2",
+        summoner_name: "fake_name",
+        region: "region",
+        most_recent_match_id: "match_id"
+      }
+
+      response = ExSummoners.update_most_recent_match(summoner_data)
+
+      assert response == {:not_new_match, summoner_data}
     end
   end
 
