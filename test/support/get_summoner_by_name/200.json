@@ -1,9 +1,9 @@
 {
-  "id": "xBsxCju8OKDXkDOgFg6FqhW39z_kbMgkm2te1DsnJT8i4dE",
-  "accountId": "J95L6CodjMfHJcznCY_zq-7iv9oBFQvUJAU64LpmeiFmr2M",
-  "puuid": "nLzwEuPGqgeZXrTATobEOUA8gGRVTkv80EDCvsZ-EZHHvls1sWox1FHlqtSFlMC0H5crlTr2lWWEJA",
-  "name": "Revenge",
-  "profileIconId": 3887,
+  "id": "fake_id",
+  "accountId": "fake_account",
+  "puuid": "fake_puuid",
+  "name": "fake_name",
+  "profileIconId": 1,
   "revisionDate": 1686632582291,
-  "summonerLevel": 556
+  "summonerLevel": 999
 }

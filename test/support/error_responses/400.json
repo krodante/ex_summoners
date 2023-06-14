@@ -1,0 +1,6 @@
+{
+  "status": {
+    "message": "Bad Request - Exception decrypting wonky",
+    "status_code": 400
+  }
+}

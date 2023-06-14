@@ -1,7 +1,7 @@
 defmodule ExSummoners.Monitor do
   use GenServer
 
-  @interval 60000
+  @interval 1000
 
   def start_link(args, opts \\ []) do
     GenServer.start_link(__MODULE__, args, opts)
